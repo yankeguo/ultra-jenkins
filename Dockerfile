@@ -120,7 +120,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends build-essential ca-certificates curl git locales locales-all openjdk-21-jdk-headless openssh-client python3 python3-pip python3-venv rsync tini tzdata unzip && \
+    apt-get install -y --no-install-recommends build-essential ca-certificates curl fontconfig git libglib2.0-dev libgraphite2-dev libharfbuzz-dev libpcre2-dev locales locales-all openjdk-21-jdk-headless openssh-client python3 python3-pip python3-venv rsync tini tzdata unzip && \
     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone && \
     install -m 0755 -d /etc/apt/keyrings && \

@@ -39,6 +39,11 @@ ARGS = {
         'tini',
         'tzdata',
         'unzip',
+        'fontconfig',
+        'libharfbuzz-dev',
+        'libglib2.0-dev',
+        'libgraphite2-dev',
+        'libpcre2-dev',
     ]
 }
 
