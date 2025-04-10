@@ -1,5 +1,4 @@
 #!/bin/bash
 
-set -eu
-
+# shellcheck disable=SC2086
 exec java $JAVA_OPTS -jar /opt/jenkins.war $JENKINS_OPTS
