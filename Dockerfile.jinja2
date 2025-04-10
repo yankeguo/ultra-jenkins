@@ -1,0 +1,37 @@
+{%- for version in node_versions -%}
+FROM alpine/curl AS battery-node-{{version[0]}}
+
+RUN curl -sSLo node.tar.gz "https://mirrors.cloud.tencent.com/nodejs-release/v{{version[1]}}/node-v{{version[1]}}-linux-x64.tar.gz" && \
+    mkdir -p "/opt/node-{{version[0]}}" && tar -zxvf node.tar.gz --strip-components 1 -C "/opt/node-{{version[0]}}" && \
+    rm -rf node.tar.gz && echo 'export PATH=/opt/node-{{version[0]}}/bin:$PATH' >> /opt/activate-node-{{version[0]}} && \
+    chmod +x /opt/activate-node-{{version[0]}}
+
+{% endfor %}
+
+FROM ubuntu:24.04
+
+ENV LANG=zh_CN.UTF-8
+ENV TZ=Asia/Shanghai
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN sed -i 's/archive.ubuntu.com/mirrors.cloud.tencent.com/g' /etc/apt/sources.list.d/ubuntu.sources && \
+    sed -i 's/security.ubuntu.com/mirrors.cloud.tencent.com/g' /etc/apt/sources.list.d/ubuntu.sources && \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y {% for package in apt_packages %}{{package}} {% endfor %}&& \
+    rm -rf /var/lib/apt/lists/* && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN git config --global --add safe.directory '*' && \
+    git config --global init.defaultBranch main
+
+{% for version in node_versions %}
+COPY --from=battery-node-{{version[0]}} /opt/node-{{version[0]}} /opt/node-{{version[0]}}
+COPY --from=battery-node-{{version[0]}} /opt/activate-node-{{version[0]}} /opt/activate-node-{{version[0]}}
+{% endfor %}
+
+EXPOSE 8080
+
+ENTRYPOINT [ "tini", "--" ]
+
+CMD ["java", "-server", "-Xms1024m", "-Xmx1024m", "-jar", "/opt/jenkins.war"]
