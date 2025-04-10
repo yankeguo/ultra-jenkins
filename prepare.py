@@ -11,11 +11,10 @@ ARGS = {
     'apt_packages': [
         'build-essential',
         'ca-certificates',
-        'curl',
-        'docker.io',
-        'git',
         'locales',
         'locales-all',
+        'git',
+        'curl',
         'openjdk-21-jdk-headless',
         'openssh-client',
         'python3',
