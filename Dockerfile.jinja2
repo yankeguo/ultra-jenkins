@@ -7,6 +7,15 @@ RUN curl -sSLo node.tar.gz "https://nodejs.org/dist/v{{version[1]}}/node-v{{vers
     chmod +x /opt/activate-node-{{version[0]}}
 
 {% endfor %}
+{%- for version in maven_versions -%}
+FROM alpine/curl AS battery-maven-{{version[0].replace('.', '_')}}
+
+RUN curl -sSLo maven.tar.gz "https://archive.apache.org/dist/maven/maven-3/{{version[1]}}/binaries/apache-maven-{{version[1]}}-bin.tar.gz" && \
+    mkdir -p "/opt/maven-{{version[0]}}" && tar -xf maven.tar.gz --strip-components 1 -C "/opt/maven-{{version[0]}}" && \
+    rm -rf maven.tar.gz && echo 'export PATH=/opt/maven-{{version[0]}}/bin:$PATH' >> /opt/activate-maven-{{version[0]}} && \
+    chmod +x /opt/activate-maven-{{version[0]}}
+
+{% endfor %}
 FROM alpine/curl AS battery-jenkins
 
 RUN curl -sSLo /opt/jenkins.war "https://get.jenkins.io/war-stable/2.492.3/jenkins.war"
@@ -35,6 +44,10 @@ COPY --from=battery-jenkins /opt/jenkins.war /opt/jenkins.war
 {% for version in node_versions %}
 COPY --from=battery-node-{{version[0]}} /opt/node-{{version[0]}} /opt/node-{{version[0]}}
 COPY --from=battery-node-{{version[0]}} /opt/activate-node-{{version[0]}} /opt/activate-node-{{version[0]}}
+{% endfor %}
+{% for version in maven_versions %}
+COPY --from=battery-maven-{{version[0].replace('.','_')}} /opt/maven-{{version[0]}} /opt/maven-{{version[0]}}
+COPY --from=battery-maven-{{version[0].replace('.','_')}} /opt/activate-maven-{{version[0]}} /opt/activate-maven-{{version[0]}}
 {% endfor %}
 
 EXPOSE 8080

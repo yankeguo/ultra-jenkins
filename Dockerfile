@@ -33,6 +33,27 @@ RUN curl -sSLo node.tar.gz "https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux
     rm -rf node.tar.gz && echo 'export PATH=/opt/node-22/bin:$PATH' >> /opt/activate-node-22 && \
     chmod +x /opt/activate-node-22
 
+FROM alpine/curl AS battery-maven-3_6
+
+RUN curl -sSLo maven.tar.gz "https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz" && \
+    mkdir -p "/opt/maven-3.6" && tar -xf maven.tar.gz --strip-components 1 -C "/opt/maven-3.6" && \
+    rm -rf maven.tar.gz && echo 'export PATH=/opt/maven-3.6/bin:$PATH' >> /opt/activate-maven-3.6 && \
+    chmod +x /opt/activate-maven-3.6
+
+FROM alpine/curl AS battery-maven-3_8
+
+RUN curl -sSLo maven.tar.gz "https://archive.apache.org/dist/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz" && \
+    mkdir -p "/opt/maven-3.8" && tar -xf maven.tar.gz --strip-components 1 -C "/opt/maven-3.8" && \
+    rm -rf maven.tar.gz && echo 'export PATH=/opt/maven-3.8/bin:$PATH' >> /opt/activate-maven-3.8 && \
+    chmod +x /opt/activate-maven-3.8
+
+FROM alpine/curl AS battery-maven-3_9
+
+RUN curl -sSLo maven.tar.gz "https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz" && \
+    mkdir -p "/opt/maven-3.9" && tar -xf maven.tar.gz --strip-components 1 -C "/opt/maven-3.9" && \
+    rm -rf maven.tar.gz && echo 'export PATH=/opt/maven-3.9/bin:$PATH' >> /opt/activate-maven-3.9 && \
+    chmod +x /opt/activate-maven-3.9
+
 
 FROM alpine/curl AS battery-jenkins
 
@@ -74,6 +95,16 @@ COPY --from=battery-node-20 /opt/activate-node-20 /opt/activate-node-20
 
 COPY --from=battery-node-22 /opt/node-22 /opt/node-22
 COPY --from=battery-node-22 /opt/activate-node-22 /opt/activate-node-22
+
+
+COPY --from=battery-maven-3_6 /opt/maven-3.6 /opt/maven-3.6
+COPY --from=battery-maven-3_6 /opt/activate-maven-3.6 /opt/activate-maven-3.6
+
+COPY --from=battery-maven-3_8 /opt/maven-3.8 /opt/maven-3.8
+COPY --from=battery-maven-3_8 /opt/activate-maven-3.8 /opt/activate-maven-3.8
+
+COPY --from=battery-maven-3_9 /opt/maven-3.9 /opt/maven-3.9
+COPY --from=battery-maven-3_9 /opt/activate-maven-3.9 /opt/activate-maven-3.9
 
 
 EXPOSE 8080

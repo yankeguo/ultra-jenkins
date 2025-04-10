@@ -8,6 +8,11 @@ ARGS = {
         ('20', '20.19.0'),
         ('22', '22.14.0'),
     ],
+    'maven_versions': [
+        ('3.6', '3.6.3'),
+        ('3.8', '3.8.8'),
+        ('3.9', '3.9.9'),
+    ],
     'apt_packages': [
         'build-essential',
         'ca-certificates',
