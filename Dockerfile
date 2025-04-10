@@ -57,9 +57,6 @@ RUN apt-get update && \
     apt-get install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
     rm -rf /var/lib/apt/lists/*
 
-RUN git config --global --add safe.directory '*' && \
-    git config --global init.defaultBranch main
-
 COPY --from=battery-jenkins /opt/jenkins.war /opt/jenkins.war
 
 
