@@ -45,9 +45,16 @@ RUN sed -i 's/archive.ubuntu.com/mirrors.cloud.tencent.com/g' /etc/apt/sources.l
     sed -i 's/security.ubuntu.com/mirrors.cloud.tencent.com/g' /etc/apt/sources.list.d/ubuntu.sources && \
     apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y build-essential ca-certificates curl docker.io git locales locales-all openjdk-21-jdk-headless openssh-client p7zip-full python3 python3-pip python3-venv rsync tini tzdata unzip zstd && \
+    apt-get install -y build-essential ca-certificates curl docker.io git locales locales-all openjdk-21-jdk-headless openssh-client python3 python3-pip python3-venv rsync tini tzdata unzip && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu noble stable" > /etc/apt/sources.list.d/docker.list && \
+    apt-get update && \
+    apt-get install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
     rm -rf /var/lib/apt/lists/* && \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN git config --global --add safe.directory '*' && \
     git config --global init.defaultBranch main

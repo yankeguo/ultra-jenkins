@@ -18,7 +18,6 @@ ARGS = {
         'locales-all',
         'openjdk-21-jdk-headless',
         'openssh-client',
-        'p7zip-full',
         'python3',
         'python3-pip',
         'python3-venv',
@@ -26,7 +25,6 @@ ARGS = {
         'tini',
         'tzdata',
         'unzip',
-        'zstd',
     ]
 }
 
