@@ -30,6 +30,8 @@ ARGS = {
     ]
 }
 
+ARGS['apt_packages'].sort()
+
 
 def main():
     with open('Dockerfile.jinja2') as f:
