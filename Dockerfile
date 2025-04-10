@@ -110,7 +110,7 @@ RUN curl -sSLo jdk.tar.gz "https://github.com/adoptium/temurin21-binaries/releas
 
 FROM battery-base AS battery-jenkins
 
-RUN curl -sSLo /opt/jenkins.war "https://get.jenkins.io/war-stable/2.492.3/jenkins.war"
+RUN mkdir -p /opt/jenkins && curl -sSLo /opt/jenkins/jenkins.war "https://get.jenkins.io/war-stable/2.492.3/jenkins.war"
 
 FROM ubuntu:24.04
 
@@ -130,8 +130,6 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
     rm -rf /var/lib/apt/lists/*
-
-COPY --from=battery-jenkins /opt/jenkins.war /opt/jenkins.war
 
 
 COPY --from=battery-node-14 /opt/node-14 /opt/node-14
@@ -172,6 +170,8 @@ COPY --from=battery-jdk-17 /opt/activate-jdk-17 /opt/activate-jdk-17
 COPY --from=battery-jdk-21 /opt/jdk-21 /opt/jdk-21
 COPY --from=battery-jdk-21 /opt/activate-jdk-21 /opt/activate-jdk-21
 
+
+COPY --from=battery-jenkins /opt/jenkins /opt/jenkins.original
 
 EXPOSE 8080
 

@@ -34,7 +34,7 @@ RUN curl -sSLo jdk.tar.gz "{{version[1]}}" && \
 {% endfor %}
 FROM battery-base AS battery-jenkins
 
-RUN curl -sSLo /opt/jenkins.war "https://get.jenkins.io/war-stable/2.492.3/jenkins.war"
+RUN mkdir -p /opt/jenkins && curl -sSLo /opt/jenkins/jenkins.war "https://get.jenkins.io/war-stable/2.492.3/jenkins.war"
 
 FROM ubuntu:24.04
 
@@ -55,8 +55,6 @@ RUN apt-get update && \
     apt-get install -y docker-ce-cli docker-buildx-plugin docker-compose-plugin && \
     rm -rf /var/lib/apt/lists/*
 
-COPY --from=battery-jenkins /opt/jenkins.war /opt/jenkins.war
-
 {% for version in node_versions %}
 COPY --from=battery-node-{{version[0]}} /opt/node-{{version[0]}} /opt/node-{{version[0]}}
 COPY --from=battery-node-{{version[0]}} /opt/activate-node-{{version[0]}} /opt/activate-node-{{version[0]}}
@@ -69,6 +67,8 @@ COPY --from=battery-maven-{{version[0].replace('.','_')}} /opt/activate-maven-{{
 COPY --from=battery-jdk-{{version[0]}} /opt/jdk-{{version[0]}} /opt/jdk-{{version[0]}}
 COPY --from=battery-jdk-{{version[0]}} /opt/activate-jdk-{{version[0]}} /opt/activate-jdk-{{version[0]}}
 {% endfor %}
+
+COPY --from=battery-jenkins /opt/jenkins /opt/jenkins.original
 
 EXPOSE 8080
 
