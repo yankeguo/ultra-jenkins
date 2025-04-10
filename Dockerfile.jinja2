@@ -3,7 +3,7 @@ FROM alpine/curl AS battery-node-{{version[0]}}
 
 RUN curl -sSLo node.tar.gz "https://nodejs.org/dist/v{{version[1]}}/node-v{{version[1]}}-linux-x64.tar.gz" && \
     mkdir -p "/opt/node-{{version[0]}}" && tar -xf node.tar.gz --strip-components 1 -C "/opt/node-{{version[0]}}" && \
-    rm -rf node.tar.gz && echo 'export PATH=/opt/node-{{version[0]}}/bin:$PATH' >> /opt/activate-node-{{version[0]}} && \
+    rm -rf node.tar.gz && echo 'export PATH="/opt/node-{{version[0]}}/bin:$PATH"' >> /opt/activate-node-{{version[0]}} && \
     chmod +x /opt/activate-node-{{version[0]}}
 
 {% endfor %}
@@ -12,8 +12,17 @@ FROM alpine/curl AS battery-maven-{{version[0].replace('.', '_')}}
 
 RUN curl -sSLo maven.tar.gz "https://archive.apache.org/dist/maven/maven-3/{{version[1]}}/binaries/apache-maven-{{version[1]}}-bin.tar.gz" && \
     mkdir -p "/opt/maven-{{version[0]}}" && tar -xf maven.tar.gz --strip-components 1 -C "/opt/maven-{{version[0]}}" && \
-    rm -rf maven.tar.gz && echo 'export PATH=/opt/maven-{{version[0]}}/bin:$PATH' >> /opt/activate-maven-{{version[0]}} && \
+    rm -rf maven.tar.gz && echo 'export PATH="/opt/maven-{{version[0]}}/bin:$PATH"' >> /opt/activate-maven-{{version[0]}} && \
     chmod +x /opt/activate-maven-{{version[0]}}
+
+{% endfor %}
+{%- for version in jdk_versions -%}
+FROM alpine/curl AS battery-jdk-{{version[0]}}
+
+RUN curl -sSLo jdk.tar.gz "{{version[1]}}" && \
+    mkdir -p "/opt/jdk-{{version[0]}}" && tar -xf jdk.tar.gz --strip-components 1 -C "/opt/jdk-{{version[0]}}" && \
+    rm -rf jdk.tar.gz && echo -e 'export PATH="/opt/jdk-{{version[0]}}/bin:$PATH"\nexport JAVA_HOME="/opt/jdk-{{version[0]}}"' >> /opt/activate-jdk-{{version[0]}} && \
+    chmod +x /opt/activate-jdk-{{version[0]}}
 
 {% endfor %}
 FROM alpine/curl AS battery-jenkins
@@ -48,6 +57,10 @@ COPY --from=battery-node-{{version[0]}} /opt/activate-node-{{version[0]}} /opt/a
 {% for version in maven_versions %}
 COPY --from=battery-maven-{{version[0].replace('.','_')}} /opt/maven-{{version[0]}} /opt/maven-{{version[0]}}
 COPY --from=battery-maven-{{version[0].replace('.','_')}} /opt/activate-maven-{{version[0]}} /opt/activate-maven-{{version[0]}}
+{% endfor %}
+{% for version in jdk_versions %}
+COPY --from=battery-jdk-{{version[0]}} /opt/jdk-{{version[0]}} /opt/jdk-{{version[0]}}
+COPY --from=battery-jdk-{{version[0]}} /opt/activate-jdk-{{version[0]}} /opt/activate-jdk-{{version[0]}}
 {% endfor %}
 
 EXPOSE 8080
