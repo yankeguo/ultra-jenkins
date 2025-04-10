@@ -34,6 +34,10 @@ RUN curl -sSLo node.tar.gz "https://nodejs.org/dist/v22.14.0/node-v22.14.0-linux
     chmod +x /opt/activate-node-22
 
 
+FROM alpine/curl AS battery-jenkins
+
+RUN curl -sSLo /opt/jenkins.war "https://get.jenkins.io/war-stable/2.492.3/jenkins.war"
+
 FROM ubuntu:24.04
 
 ENV LANG=zh_CN.UTF-8
@@ -56,6 +60,8 @@ RUN apt-get update && \
 RUN git config --global --add safe.directory '*' && \
     git config --global init.defaultBranch main
 
+COPY --from=battery-jenkins /opt/jenkins.war /opt/jenkins.war
+
 
 COPY --from=battery-node-14 /opt/node-14 /opt/node-14
 COPY --from=battery-node-14 /opt/activate-node-14 /opt/activate-node-14
@@ -75,6 +81,8 @@ COPY --from=battery-node-22 /opt/activate-node-22 /opt/activate-node-22
 
 EXPOSE 8080
 
-ENTRYPOINT [ "tini", "--" ]
+ENTRYPOINT [ "/usr/bin/tini", "--" ]
 
-CMD ["java", "-server", "-Xms1024m", "-Xmx1024m", "-jar", "/opt/jenkins.war"]
+ADD run.sh /run.sh
+
+CMD [ "/run.sh" ]
