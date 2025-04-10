@@ -1,35 +1,35 @@
 FROM alpine/curl AS battery-node-14
 
 RUN curl -sSLo node.tar.gz "https://mirrors.cloud.tencent.com/nodejs-release/v14.21.3/node-v14.21.3-linux-x64.tar.gz" && \
-    mkdir -p "/opt/node-14" && tar -zxvf node.tar.gz --strip-components 1 -C "/opt/node-14" && \
+    mkdir -p "/opt/node-14" && tar -xf node.tar.gz --strip-components 1 -C "/opt/node-14" && \
     rm -rf node.tar.gz && echo 'export PATH=/opt/node-14/bin:$PATH' >> /opt/activate-node-14 && \
     chmod +x /opt/activate-node-14
 
 FROM alpine/curl AS battery-node-16
 
 RUN curl -sSLo node.tar.gz "https://mirrors.cloud.tencent.com/nodejs-release/v16.20.2/node-v16.20.2-linux-x64.tar.gz" && \
-    mkdir -p "/opt/node-16" && tar -zxvf node.tar.gz --strip-components 1 -C "/opt/node-16" && \
+    mkdir -p "/opt/node-16" && tar -xf node.tar.gz --strip-components 1 -C "/opt/node-16" && \
     rm -rf node.tar.gz && echo 'export PATH=/opt/node-16/bin:$PATH' >> /opt/activate-node-16 && \
     chmod +x /opt/activate-node-16
 
 FROM alpine/curl AS battery-node-18
 
 RUN curl -sSLo node.tar.gz "https://mirrors.cloud.tencent.com/nodejs-release/v18.20.8/node-v18.20.8-linux-x64.tar.gz" && \
-    mkdir -p "/opt/node-18" && tar -zxvf node.tar.gz --strip-components 1 -C "/opt/node-18" && \
+    mkdir -p "/opt/node-18" && tar -xf node.tar.gz --strip-components 1 -C "/opt/node-18" && \
     rm -rf node.tar.gz && echo 'export PATH=/opt/node-18/bin:$PATH' >> /opt/activate-node-18 && \
     chmod +x /opt/activate-node-18
 
 FROM alpine/curl AS battery-node-20
 
 RUN curl -sSLo node.tar.gz "https://mirrors.cloud.tencent.com/nodejs-release/v20.19.0/node-v20.19.0-linux-x64.tar.gz" && \
-    mkdir -p "/opt/node-20" && tar -zxvf node.tar.gz --strip-components 1 -C "/opt/node-20" && \
+    mkdir -p "/opt/node-20" && tar -xf node.tar.gz --strip-components 1 -C "/opt/node-20" && \
     rm -rf node.tar.gz && echo 'export PATH=/opt/node-20/bin:$PATH' >> /opt/activate-node-20 && \
     chmod +x /opt/activate-node-20
 
 FROM alpine/curl AS battery-node-22
 
 RUN curl -sSLo node.tar.gz "https://mirrors.cloud.tencent.com/nodejs-release/v22.14.0/node-v22.14.0-linux-x64.tar.gz" && \
-    mkdir -p "/opt/node-22" && tar -zxvf node.tar.gz --strip-components 1 -C "/opt/node-22" && \
+    mkdir -p "/opt/node-22" && tar -xf node.tar.gz --strip-components 1 -C "/opt/node-22" && \
     rm -rf node.tar.gz && echo 'export PATH=/opt/node-22/bin:$PATH' >> /opt/activate-node-22 && \
     chmod +x /opt/activate-node-22
 
